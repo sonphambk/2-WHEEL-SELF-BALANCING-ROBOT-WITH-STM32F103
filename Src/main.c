@@ -80,9 +80,9 @@ float angle_roll = 0;
 float angle_pitch = 0;
 float P_part1 ,I_part1,D_part1,Error,pre_Error,pre_pre_Error,Out1,pre_Out1;
 float  P_part2 ,I_part2,D_part2,Out2,pre_Out2;
-float  Kp1 = 25; //28 //30 //26
-float  Ki1 = 420;//230//350//390
-float  Kd1 = 1.2;//1.14//1.18//1.18
+float  Kp1 = 34; //28 //30 //26
+float  Ki1 = 440;//230//350//390
+float  Kd1 = 1.182;//1.14//1.18//1.18
 float maxPID = 255;
 char receive_buff[30];
 float setpoint = -2;  
@@ -312,12 +312,17 @@ void PID(float setpoint,float angle_current)
 								Out1 = pre_Out1 + P_part1 + I_part1 + D_part1 ;
 								if (Out1 > maxPID) Out1 = maxPID;
 								else if (Out1 <-maxPID) Out1 = -maxPID;
+								if (Out1 == 0) 
+									{
+										__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,0);
+										__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_2,0);
+									}
 								if (Out1 >0)
 									{
 										move(0,1);
 										move(1,1);
 										vel= Out1;
-									if (vel >10 && vel <70 ) vel = 70;
+									if (vel >153  ) vel = 153;
 										vel_left = vel;
 										vel_right = vel;
 										__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,vel_left);
@@ -328,7 +333,7 @@ void PID(float setpoint,float angle_current)
 										move(0,0);
 										move(1,0);
 										vel= Out1;
-										if (vel >-70 && vel <-0 ) vel = -70;
+										if ( vel <-153 ) vel = -153;
 										vel_left = vel;
 										vel_right = vel;
 										__HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,(vel_left*-1));
